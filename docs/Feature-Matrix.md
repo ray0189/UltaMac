@@ -33,7 +33,7 @@ Last updated: **2026-11-15** (end of Phase 2). Evidence = automated test name, s
 | | Compressed images (.xz/.gz/.zip) | ❌ | Detected; you must decompress first |
 | | Multiboot (Ventoy-style) | ❌ | Research only (`USB-Compatibility.md`) |
 | | Disk image backup/restore, benchmark | ❌ | Phase 8 |
-| **Sounds** | 14 original synthesised sounds, SoundManager, previews, volume, off by default, respects the system UI-sound setting | ✅ | Files generated and bundled; preview UI present. Audio output not verified by ear |
+| **Sounds** | 14 original synthesised sounds, SoundManager, previews, volume, on by default, respects the system UI-sound setting | ✅ | Files generated and bundled; preview UI present. Audio output not verified by ear |
 | **Motion** | Ring/number transitions, hover lift, Reduce Motion honoured, no continuous animations | ✅ | Steady CPU measured (dashboard 1.8%) |
 | **Modes** | Basic / Expert (paths, rule IDs, hashes, MAC/IPv6/MTU, device nodes, disk-image targets) | ✅ | Screenshots in both modes |
 | **Menu bar monitor** | Optional (off by default) | 🟡 | Builds; not screenshotted |

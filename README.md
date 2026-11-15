@@ -78,7 +78,7 @@ An interactive treemap of any folder. Click to select, double-click to drill in,
 | **Maintenance** | Verify the disk, check app signatures, crash summary, Spotlight status, snapshots, DNS flush |
 | **Disk Manager · ISO Library** | Inspect, eject and erase USB drives; organise images and verify checksums |
 | **System Reports** | Export a hardware and software summary as Markdown or JSON |
-| **Sounds & Expert Mode** | Original synthesised sound effects (off by default); Expert Mode reveals paths, hashes and raw values |
+| **Sounds & Expert Mode** | Original synthesised sound effects (on by default, adjustable in Settings); Expert Mode reveals paths, hashes and raw values |
 
 <img src="docs/images/maintenance.jpg" alt="Maintenance" width="100%">
 

@@ -6,6 +6,6 @@
 
 **Motion:** `Motion.standard` (0.35 s smooth), `.gentle`, `.spring`; all `nil` when Reduce Motion is on. No continuous animations: a pulsing icon and blurred backgrounds were removed after they measured 32% CPU.
 
-**Sound:** 14 original synthesised cues (soft inharmonic bells, glides, ticks), −6 dBFS peak. Off by default, volume setting, silent when the system UI-sound setting is off.
+**Sound:** 14 original synthesised cues (soft inharmonic bells, glides, ticks), −6 dBFS peak. On by default (can be turned off), volume setting, silent when the system UI-sound setting is off.
 
 **Modes:** Basic shows names and plain-language consequences. Expert adds full paths, rule IDs, modified dates, hashes, device nodes, MAC/IPv6/MTU and disk-image targets.

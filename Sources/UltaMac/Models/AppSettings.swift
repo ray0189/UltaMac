@@ -42,7 +42,7 @@ final class AppSettings {
         exclusions = defaults.stringArray(forKey: "exclusions") ?? []
         expertMode = defaults.bool(forKey: "expertMode")
         appearance = AppearanceMode(rawValue: defaults.string(forKey: "appearance") ?? "") ?? .system
-        soundEnabled = defaults.bool(forKey: "soundEnabled") // off by default
+        soundEnabled = defaults.object(forKey: "soundEnabled") as? Bool ?? true // on by default
         soundVolume = defaults.object(forKey: "soundVolume") as? Float ?? 0.6
         soundNavigation = defaults.bool(forKey: "soundNavigation")
         showMenuBarMonitor = defaults.object(forKey: "showMenuBarMonitor") as? Bool ?? true

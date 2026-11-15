@@ -15,7 +15,7 @@ struct CleanerScreen: View {
             }
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 if model.isScanning {
                     ScanProgress(title: "Scanning…", detail: model.status, fraction: model.fraction) { model.stop() }
                 } else if !model.hasScanned {
@@ -124,7 +124,6 @@ struct CleanerScreen: View {
                 get: { model.selected.contains(item.url) },
                 set: { if $0 { model.selected.insert(item.url) } else { model.selected.remove(item.url) } }))
                 .toggleStyle(.checkbox).labelsHidden()
-                .disabled(item.note == "Locked" || item.note == "Needs admin")
             FileIcon(url: item.url, size: 16)
             Text(settings.expertMode ? relativeHomePath(item.url) : item.url.lastPathComponent)
                 .lineLimit(1).truncationMode(.middle)

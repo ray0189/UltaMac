@@ -218,17 +218,13 @@ final class LargeOldModel {
     }
 
     var totalSize: Int64 { entries.reduce(0) { $0 + $1.size } }
-    /// Locked items can be selected in the table but are never sent for removal.
-    var selectedEntries: [FileEntry] { entries.filter { selected.contains($0.url) && $0.lock == nil } }
-    var selectedLockedCount: Int { entries.filter { selected.contains($0.url) && $0.lock != nil }.count }
+    var selectedEntries: [FileEntry] { entries.filter { selected.contains($0.url) } }
 
     func removal() -> PendingRemoval {
-        let skipped = selectedLockedCount
         return PendingRemoval(title: "Remove \(selectedEntries.count) file\(selectedEntries.count == 1 ? "" : "s")",
                        requests: selectedEntries.map { RemovalRequest(url: $0.url, size: $0.size) },
                        context: "Large & Old Files",
-                       note: "These are your own files. Check each one; nothing here is junk by definition."
-                           + (skipped > 0 ? " \(skipped) locked item\(skipped == 1 ? " is" : "s are") left out; hover the Locked badge to see why." : ""))
+                       note: "These are your own files. Check each one; nothing here is junk by definition.")
     }
 
     func didRemove(_ urls: [URL]) {

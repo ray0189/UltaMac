@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 
 APP=build/UltaMac.app
 BUNDLE_ID=local.ultamac.app
-VERSION=${VERSION:-0.2.0}
+VERSION=${VERSION:-0.4.0}
 MODE=${1:-}
 
 if [[ "$MODE" == "--release" ]]; then
@@ -65,6 +65,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>NSHumanReadableCopyright</key><string>UltaMac — The Ultimate Mac Toolkit. Clean. Monitor. Optimise. Recover.</string>
   <!-- Shown by macOS in its permission prompts. -->
   <key>NSDesktopFolderUsageDescription</key><string>UltaMac measures your Desktop to show what uses space and to find large, old and duplicate files. Nothing is removed without your review.</string>
+  <key>NSAppleEventsUsageDescription</key><string>UltaMac asks macOS to show its standard Restart dialog when you choose Restart in Optimise. Nothing restarts unless you confirm there.</string>
   <key>NSDocumentsFolderUsageDescription</key><string>UltaMac measures your Documents folder to show what uses space and to find large, old and duplicate files. Nothing is removed without your review.</string>
   <key>NSDownloadsFolderUsageDescription</key><string>UltaMac looks in Downloads for old installers and large files you may no longer need. Nothing is removed without your review.</string>
   <key>NSRemovableVolumesUsageDescription</key><string>UltaMac reads USB drives so you can inspect, eject, erase or create bootable installers on them.</string>

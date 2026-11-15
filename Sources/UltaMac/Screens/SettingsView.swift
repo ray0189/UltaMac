@@ -2,6 +2,7 @@ import SwiftUI
 import UltaMacCore
 
 struct SettingsView: View {
+    @AppStorage("watchdogEnabled") private var watchdog = true
     /// true inside the main window (with page header), false in the Settings scene.
     let embedded: Bool
     @Environment(AppSettings.self) private var settings
@@ -114,6 +115,9 @@ struct SettingsView: View {
                     Text("1 second").tag(1.0); Text("2 seconds").tag(2.0); Text("5 seconds").tag(5.0)
                 }
                 Toggle("Show monitor in menu bar", isOn: $settings.showMenuBarMonitor)
+                Toggle("Watch for slowdowns (runaway apps, memory, disk space)", isOn: $watchdog)
+                Text("Flags apps that keep a CPU core busy for over a minute, high memory pressure and low disk space in Optimise and the menu bar. Nothing is quit without your click.")
+                    .font(.caption).foregroundStyle(.secondary)
                 Text("Sampling only runs while a monitor view or the menu-bar item is visible.").font(.caption).foregroundStyle(.secondary)
             }
 

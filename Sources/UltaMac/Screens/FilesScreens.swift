@@ -17,7 +17,7 @@ struct LargeOldScreen: View {
             }
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 if model.isScanning {
                     ScanProgress(title: "Looking through your folders…", detail: "\(model.scanned.formatted()) items checked") { model.stop() }
                 } else if !model.hasScanned {
@@ -43,6 +43,13 @@ struct LargeOldScreen: View {
         }
         .sheet(item: $pending) { removal in
             ReviewSheet(removal: removal) { report in model.didRemove(report.removed); model.lastReport = report }
+        }
+        // Screenshot hooks: scan, then open the review sheet for locked files (nothing is removed without a click).
+        .onAppear { if CommandLine.arguments.contains("--scan"), !model.hasScanned, !model.isScanning { model.scan() } }
+        .onChange(of: model.isScanning) { _, scanning in
+            guard !scanning, CommandLine.arguments.contains("--review-locked") else { return }
+            model.selected = Set(model.entries.filter { $0.lock != nil }.map(\.url))
+            if !model.selected.isEmpty { pending = model.removal() }
         }
     }
 
@@ -91,7 +98,7 @@ struct DuplicatesScreen: View {
             }
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 if model.isScanning {
                     let p = model.progress
                     ScanProgress(title: p?.phase ?? "Listing files…",
@@ -146,7 +153,6 @@ struct DuplicatesScreen: View {
                         get: { model.selected.contains(file.url) },
                         set: { if $0 { model.selected.insert(file.url) } else { model.selected.remove(file.url) } }))
                         .toggleStyle(.checkbox).labelsHidden()
-                        .disabled(file.lock != nil)
                     Text(relativeHomePath(file.url)).lineLimit(1).truncationMode(.middle)
                     if let lock = file.lock { LockPill(lock: lock) }
                     if !model.selected.contains(file.url) { Pill(text: "Keep", tint: .green) }

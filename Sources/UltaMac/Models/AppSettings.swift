@@ -56,6 +56,7 @@ final class AppSettings {
     }
 
     var remover: FileRemover { FileRemover(policy: policy, auditLog: auditLog) }
+    var adminRemover: AdminRemover { AdminRemover(policy: policy, auditLog: auditLog) }
 
     /// The app was called "Sweep" before; carry its history and library over once.
     static func migrateLegacyData() {

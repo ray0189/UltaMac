@@ -16,6 +16,7 @@ final class AppState {
     let library = ImageLibraryModel()
     let usb = USBWizardModel()
     let permissions = PermissionsModel()
+    let maintenance = MaintenanceModel()
 
     func go(_ d: Destination) {
         animate(Motion.spring) { destination = d }
@@ -152,6 +153,7 @@ struct RootView: View {
         case .battery: BatteryScreen()
         case .startup: StartupScreen(model: state.startup)
         case .network: NetworkScreen()
+        case .optimise: OptimiseScreen()
         case .maintenance: MaintenanceScreen()
         case .usbToolkit: USBToolkitScreen()
         case .diskManager: DiskManagerScreen()

@@ -11,7 +11,7 @@ struct UninstallerScreen: View {
             TextField("Search apps", text: $model.search).textFieldStyle(.roundedBorder).frame(width: 200)
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 ChipPicker(options: UninstallerModel.Filter.allCases.map { ($0, "\($0.rawValue) (\(model.filtered($0).count))") },
                            selection: $model.filter)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -131,7 +131,6 @@ struct UninstallerScreen: View {
                         get: { model.selectedLeftovers.contains(leftover.url) },
                         set: { if $0 { model.selectedLeftovers.insert(leftover.url) } else { model.selectedLeftovers.remove(leftover.url) } }))
                         .toggleStyle(.checkbox).labelsHidden()
-                        .disabled(leftover.lock != nil)
                     VStack(alignment: .leading, spacing: 1) {
                         HStack(spacing: 4) {
                             Text(relativeHomePath(leftover.url)).lineLimit(1).truncationMode(.middle)
@@ -161,8 +160,8 @@ struct UninstallerScreen: View {
                     .disabled(model.selectedLeftovers.isEmpty)
                 Button("Uninstall…") { pending = model.removal(includeApp: true) }
                     .buttonStyle(.borderedProminent).tint(.red)
-                    .disabled(running || appLock != nil)
-                    .help(appLock?.reason ?? "")
+                    .disabled(running)
+                    .help(appLock.map { $0.reason + " You'll be asked for your administrator password." } ?? "")
             }
         }
     }

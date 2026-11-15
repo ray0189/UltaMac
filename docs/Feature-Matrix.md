@@ -8,6 +8,7 @@ Last updated: **2026-11-15** (end of Phase 2). Evidence = automated test name, s
 |---|---|---|---|
 | **Safety** | SafetyPolicy (deny-lists, SIP/immutable flags, allowed roots, exclusions) | ✅ | `SafetyTests` (9) |
 | | Lock detection before removal (ACL deny-delete on item or folder, read-only folder, other owner); flagged in every scanner, never unlocked | ✅ | `LockTests` (5) with real `chmod +a` locks; verified on a locked 10 GB `.ipsw` |
+| | Remove locked items with the administrator password (opt-in, per batch, macOS prompt); Trash with lock cleared | 🟡 | `AdminRemoverTests` (5) run the same script without the prompt; review sheet screenshotted with 5 real locked files. Password step not completed in tests |
 | | Trash-first removal; per-item permanent only for items already in the Trash | ✅ | `permanentOnlyAppliesPerItemNotToWholeBatch` (regression for an audit bug) |
 | | Audit trail (JSON lines), Recent Activity screen | ✅ | `AuditTests`; screen screenshotted (empty state) |
 | **Dashboard** | Mac info, storage ring, CPU/memory/battery/network cards, health checks (no invented score), Smart Scan | ✅ | Screenshots before and after Smart Scan (11.01 GB junk, 76 large/old files, 13 unused apps, 2 Intel apps) |
@@ -17,6 +18,7 @@ Last updated: **2026-11-15** (end of Phase 2). Evidence = automated test name, s
 | **Large & Old Files** | >100 MB or >10 MB unused for a year; kind and age filters | ✅ engine / 🟡 UI | `LargeOldTests`; found 76 files in Smart Scan |
 | **App Uninstaller** | Inventory, sizes, architecture, last opened, leftovers with confidence, filters | ✅ | `UninstallerTests`, `AppInsightTests`; screenshot |
 | | Root-owned apps | 🔒 | Removal fails without admin and is reported, never forced |
+| **Optimise** | Live slowdown detection (runaway apps, memory hogs under pressure, low disk, heat, uptime, startup items), quit with confirmation, 6 speed-up tools, menu-bar alerts | ✅ / 🟡 | `OptimiseTests`, `AppGroupingTests`; screenshot with real findings. Admin tools (purge, Spotlight, DNS) not run in tests |
 | **Live Monitor** | CPU (user/system/per-core, P+E split), memory breakdown, pressure, swap, network charts | ✅ | `MonitorTests`; screenshot; 5.1% CPU while visible |
 | **Process Inspector** | Own-user processes, CPU/memory, sort/filter, quit apps | ✅ | Screenshot (350 processes) |
 | **Battery** | %, charging watts, adapter, health % (full ÷ design), cycles, controller readings | ✅ | `BatteryTests`; screenshot (91% health, 4628/5103 mAh) |
@@ -37,7 +39,7 @@ Last updated: **2026-11-15** (end of Phase 2). Evidence = automated test name, s
 | **Sounds** | 14 original synthesised sounds, SoundManager, previews, volume, on by default, respects the system UI-sound setting | ✅ | Files generated and bundled; preview UI present. Audio output not verified by ear |
 | **Motion** | Ring/number transitions, hover lift, Reduce Motion honoured, no continuous animations | ✅ | Steady CPU measured (dashboard 1.8%) |
 | **Modes** | Basic / Expert (paths, rule IDs, hashes, MAC/IPv6/MTU, device nodes, disk-image targets) | ✅ | Screenshots in both modes |
-| **Menu bar monitor** | Optional (off by default) | 🟡 | Builds; not screenshotted |
+| **Menu bar monitor** | On by default; live stats, Needs-attention alerts, Quick Clean | 🟡 | Builds; panel not screenshotted |
 | **Offline** | No networking frameworks linked | ✅ (static) | `nm -u` shows no URLSession/CFNetwork/socket-connect symbols. A network-blocked runtime test is still pending |
 | **Build** | SwiftPM + `build-app.sh` → arm64 `.app`, ad-hoc signed | ✅ | Built and launched on an M1 MacBook Pro, 8 GB |
 | | `.xcodeproj` | 🟠 | Open `Package.swift` in Xcode; no generated project |

@@ -6,7 +6,7 @@ struct MenuBarLabel: View {
     @Environment(MonitorModel.self) private var monitor
     var body: some View {
         HStack(spacing: 3) {
-            Image(systemName: "sparkles")
+            Image(systemName: monitor.hasCriticalIssue ? "exclamationmark.triangle.fill" : "sparkles")
             Text("\(Int((monitor.cpu?.total ?? 0) * 100))%").monospacedDigit()
         }
         .task { monitor.start() }
@@ -60,11 +60,13 @@ struct MenuBarPanel: View {
     @Environment(AppState.self) private var state
     @Environment(\.openWindow) private var openWindow
     @State private var quick = QuickCleanModel()
+    @State private var quitTarget: (pid: Int32, name: String)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Space.m) {
             header
             stats
+            attention
             quickClean
             shortcuts
             Divider()
@@ -133,6 +135,38 @@ struct MenuBarPanel: View {
         .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous))
     }
 
+    @ViewBuilder private var attention: some View {
+        let issues = monitor.issues.filter { $0.severity >= .warning }
+        if !issues.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Needs attention", systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout.weight(.semibold)).foregroundStyle(.orange)
+                ForEach(issues.prefix(3)) { issue in
+                    HStack {
+                        Text(issue.title).font(.caption).lineLimit(2)
+                        Spacer()
+                        if case .quit(let pid, let name) = issue.fix {
+                            Button("Quit") { quitTarget = (pid, name) }.controlSize(.small)
+                        } else {
+                            Button("Fix") { open(.optimise) }.controlSize(.small)
+                        }
+                    }
+                }
+            }
+            .padding(Theme.Space.m)
+            .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous))
+            .alert("Quit \(quitTarget?.name ?? "")?", isPresented: Binding(get: { quitTarget != nil }, set: { if !$0 { quitTarget = nil } })) {
+                Button("Quit", role: .destructive) {
+                    if let t = quitTarget { Sound.play(PerformanceFixer.quit(pid: t.pid, name: t.name) ? .success : .warning) }
+                    quitTarget = nil
+                }
+                Button("Cancel", role: .cancel) { quitTarget = nil }
+            } message: {
+                Text("Apps are asked to quit normally and may ask you to save.")
+            }
+        }
+    }
+
     private var quickClean: some View {
         VStack(alignment: .leading, spacing: Theme.Space.s) {
             HStack {
@@ -180,7 +214,7 @@ struct MenuBarPanel: View {
     }
 
     private var shortcuts: some View {
-        let items: [Destination] = [.dashboard, .storage, .uninstaller, .monitor, .maintenance, .usbToolkit]
+        let items: [Destination] = [.dashboard, .optimise, .storage, .uninstaller, .monitor, .usbToolkit]
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3), spacing: 6) {
             ForEach(items) { d in
                 Button { open(d) } label: {

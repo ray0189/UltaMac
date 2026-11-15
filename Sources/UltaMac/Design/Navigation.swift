@@ -15,7 +15,7 @@ enum Destination: String, CaseIterable, Identifiable, Hashable {
     // Cleaning & Storage
     case cleaner, storage, duplicates, largeOld, uninstaller
     // System & Performance
-    case monitor, processes, battery, startup, network, maintenance
+    case optimise, monitor, processes, battery, startup, network, maintenance
     // Tools & Recovery
     case usbToolkit, diskManager, isoLibrary, reports
     // Settings
@@ -27,7 +27,7 @@ enum Destination: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .dashboard, .activity: .overview
         case .cleaner, .storage, .duplicates, .largeOld, .uninstaller: .cleaning
-        case .monitor, .processes, .battery, .startup, .network, .maintenance: .system
+        case .optimise, .monitor, .processes, .battery, .startup, .network, .maintenance: .system
         case .usbToolkit, .diskManager, .isoLibrary, .reports: .tools
         case .settings, .permissions: nil
         }
@@ -42,6 +42,7 @@ enum Destination: String, CaseIterable, Identifiable, Hashable {
         case .duplicates: "Duplicate Finder"
         case .largeOld: "Large & Old Files"
         case .uninstaller: "App Uninstaller"
+        case .optimise: "Optimise"
         case .monitor: "Live Monitor"
         case .processes: "Process Inspector"
         case .battery: "Battery"
@@ -66,6 +67,7 @@ enum Destination: String, CaseIterable, Identifiable, Hashable {
         case .duplicates: "Identical files, confirmed byte-for-byte with SHA-256."
         case .largeOld: "Big files and files you haven't opened in a long time."
         case .uninstaller: "Remove apps together with the files they leave behind."
+        case .optimise: "Find and fix what is slowing your Mac."
         case .monitor: "Live CPU, memory and network activity."
         case .processes: "What's running, and what it uses."
         case .battery: "Charge, health and power details from the battery controller."
@@ -90,6 +92,7 @@ enum Destination: String, CaseIterable, Identifiable, Hashable {
         case .duplicates: "doc.on.doc"
         case .largeOld: "archivebox"
         case .uninstaller: "xmark.app"
+        case .optimise: "gauge.with.dots.needle.67percent"
         case .monitor: "waveform.path.ecg"
         case .processes: "list.bullet.rectangle"
         case .battery: "battery.75percent"

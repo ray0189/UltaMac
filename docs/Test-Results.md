@@ -1,6 +1,6 @@
 # Test Results — 2026-11-15 (M1 MacBook Pro, 8 GB, macOS 27.2, Xcode 27.1 / Swift 6.4)
 
-## Automated: `swift test`: **57 tests, 17 suites, all passing** (≈9 s)
+## Automated: `swift test`: **69 tests, 20 suites, all passing** (≈9 s)
 | Suite | Covers |
 |---|---|
 | Safety policy (9), File remover (2), Audit (3) | Protected paths, flags, symlinks, exclusions, per-item permanent mode, audit lines, rule documentation |
@@ -11,6 +11,8 @@
 | Image inspector (4) | Hybrid ISO, plain ISO refused, GPT, compressed Pi image; SHA-256 equals `shasum` |
 | Raw writer (2) | **Real write → read-back → SHA-256 verify on a scratch 8 MB disk image**; default gate blocks it; cancellation |
 | Removal locks (5) | Real ACL-locked files and folders detected; remover gives a precise reason (never blames Full Disk Access) and leaves the lock untouched; scanners mark locked items unselected |
+| Administrator remover (5) | Script run without the prompt: names with quotes, `$(…)`, `;` and tabs stay literal (no injected file is created); Trash name collisions; ACL cleared on the trashed copy; permanent mode; policy denials still refused; only lock/permission failures are retryable |
+| Performance advisor (5), App grouping (2) | Runaway needs 60 s sustained load and resets on a dip; protected processes never suggested or terminated; memory hogs only under pressure/swap; disk/uptime/autostart ordering; speed-up tools exist; helpers grouped under their app, system daemons excluded, iOS Simulator processes grouped |
 | Network/maintenance/reports (4) | Local config only; identifiers excluded; read-only task runs; ProcessRunner passes `;`/`$()` literally |
 
 ## Manual / measured
@@ -21,6 +23,8 @@
 | Memory (RSS) | 112–148 MB depending on screen |
 | App size | 7.9 MB (5.9 MB binary + icons + sounds) |
 | Networking symbols | None linked (`nm -u`) |
+| Optimise on this Mac | Flagged Brave Browser (1.68 GB, 16 processes) and Claude (1.35 GB, 15 processes) with 7.3 GB swapped, and 19 days' uptime; system daemons not offered |
+| Locked files | Review sheet marks the 5 locked `~/Pictures` files “Password” with the opt-in checkbox; nothing removed during testing |
 | Screenshots inspected | Dashboard (light, dark, after Smart Scan), Cleaner (Basic, Expert), Uninstaller, Monitor, Processes, Battery, Network, Maintenance, Reports, Disk Manager, USB Toolkit, Settings, Duplicates |
 
 ## Bugs found and fixed during testing

@@ -25,6 +25,15 @@ final class MonitorModel {
     private(set) var memoryTotals: [Double] = []
     private(set) var fullDiskAccess: FullDiskAccess = .unknown
     private(set) var lastSample = Date()
+    /// Watchdog: live slowdowns with fixes, and processes that stay busy (see PerformanceAdvisor).
+    private(set) var issues: [PerformanceIssue] = []
+    private(set) var runaways: [RunawayTracker.Runaway] = []
+    private(set) var watchSample: [ProcessSample] = []
+    private(set) var autoStartCount: Int?
+    private var tracker = RunawayTracker()
+    private var tickCount = 0
+    var watchdogEnabled: Bool { UserDefaults.standard.object(forKey: "watchdogEnabled") as? Bool ?? true }
+    var hasCriticalIssue: Bool { issues.contains { $0.severity == .critical } }
 
     private let cpuSampler = CPUSampler()
     private let netSampler = NetworkSampler()
@@ -69,11 +78,27 @@ final class MonitorModel {
         battery = BatteryStatus.current()
         system = SystemInfo.current()
         fullDiskAccess = FullDiskAccess.status()
+        Task {
+            let count = await runInBackground {
+                LaunchItemsScanner().scan().filter { !$0.disabled && ($0.runAtLoad || $0.keepAlive) }.count
+            }
+            autoStartCount = count
+        }
+    }
+
+    /// Re-evaluates the watchdog now (e.g. after quitting a process).
+    func refreshIssues() {
+        issues = PerformanceAdvisor.issues(.init(memory: memory, disk: disk, uptime: system.uptime,
+                                                 thermal: ProcessInfo.processInfo.thermalState,
+                                                 processes: watchSample, runaways: runaways,
+                                                 autoStartCount: autoStartCount))
     }
 
     private func tick() async {
         let cpuSampler = cpuSampler, netSampler = netSampler, procSampler = procSampler
-        let wantProcesses = processSubscribers > 0
+        tickCount += 1
+        // Process list: every tick while a process view is open; every ~5th tick for the watchdog.
+        let wantProcesses = processSubscribers > 0 || (watchdogEnabled && tickCount % 5 == 1)
         let (c, m, n, p) = await runInBackground {
             (cpuSampler.sample(), MemoryStats.current(), netSampler.sample(), wantProcesses ? procSampler.sample() : nil)
         }
@@ -96,6 +121,11 @@ final class MonitorModel {
             networkHistory.append(ChartPoint(time: now, value: n.bytesOutPerSecond, series: "Upload"))
             if networkHistory.count > historyLength * 2 { networkHistory.removeFirst(networkHistory.count - historyLength * 2) }
         }
-        if let p { processes = p }
+        if let p {
+            processes = p
+            watchSample = p
+            runaways = tracker.update(p, now: now)
+        }
+        if watchdogEnabled { refreshIssues() } else if !issues.isEmpty { issues = [] }
     }
 }

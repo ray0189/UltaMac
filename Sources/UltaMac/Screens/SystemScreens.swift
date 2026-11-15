@@ -279,7 +279,7 @@ struct StartupScreen: View {
             .disabled(selectedRemovable.isEmpty)
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 Table(model.items, selection: $model.selection) {
                     TableColumn("Label") { item in
                         HStack(spacing: 6) {

@@ -30,6 +30,14 @@ public struct RemovalFailure: Sendable, Hashable, Identifiable, Codable {
     public var id: URL { url }
     public let url: URL
     public let reason: String
+    /// True when an administrator could remove it (a lock or permission problem, not a safety rule).
+    public var needsAdmin: Bool? = nil
+
+    public init(url: URL, reason: String, needsAdmin: Bool = false) {
+        self.url = url
+        self.reason = reason
+        self.needsAdmin = needsAdmin ? true : nil
+    }
 }
 
 public struct RemovalReport: Sendable {
@@ -38,6 +46,26 @@ public struct RemovalReport: Sendable {
     public var failures: [RemovalFailure] = []
     public var bytesRemoved: Int64 = 0
     public var mode: RemovalMode
+    public var purpose: SafetyPolicy.Purpose = .clean
+
+    public init(mode: RemovalMode, purpose: SafetyPolicy.Purpose = .clean) {
+        self.mode = mode
+        self.purpose = purpose
+    }
+
+    /// Folds in the result of an administrator retry of some of this report's failures.
+    public func merging(admin: RemovalReport) -> RemovalReport {
+        var merged = self
+        let retried = Set(admin.removed + admin.failures.map(\.url))
+        merged.failures = failures.filter { !retried.contains($0.url) } + admin.failures
+        merged.trashed += admin.trashed
+        merged.deleted += admin.deleted
+        merged.bytesRemoved += admin.bytesRemoved
+        return merged
+    }
+
+    /// Failures an administrator could remove (with the user's password).
+    public var adminRetryable: [RemovalFailure] { failures.filter { $0.needsAdmin == true } }
 
     public var removed: [URL] { trashed + deleted }
 
@@ -67,7 +95,7 @@ public struct FileRemover: Sendable {
                        mode: RemovalMode,
                        purpose: SafetyPolicy.Purpose = .clean,
                        context: String = "Cleanup") -> RemovalReport {
-        var report = RemovalReport(mode: mode)
+        var report = RemovalReport(mode: mode, purpose: purpose)
         var sizes: [URL: Int64] = [:]
         let fm = FileManager()
         // Deepest paths first so parents listed alongside children don't fail spuriously.
@@ -79,7 +107,7 @@ public struct FileRemover: Sendable {
             }
             // Diagnose locks first so the reason is precise and nothing is half-attempted.
             if let lock = RemovalLock.check(request.url) {
-                report.failures.append(RemovalFailure(url: request.url, reason: lock.reason))
+                report.failures.append(RemovalFailure(url: request.url, reason: lock.reason, needsAdmin: true))
                 continue
             }
             let itemMode: RemovalMode = request.permanentOnly ? .deletePermanently : mode
@@ -95,7 +123,11 @@ public struct FileRemover: Sendable {
                 report.bytesRemoved += request.size
                 sizes[request.url] = request.size
             } catch {
-                report.failures.append(RemovalFailure(url: request.url, reason: FileRemover.describe(error, url: request.url)))
+                let code = (error as NSError).code
+                let permission = (error as NSError).domain == NSCocoaErrorDomain
+                    && (code == NSFileWriteNoPermissionError || code == NSFileReadNoPermissionError)
+                report.failures.append(RemovalFailure(url: request.url, reason: FileRemover.describe(error, url: request.url),
+                                                      needsAdmin: permission))
             }
         }
         auditLog?.record(report, sizes: sizes, context: context)
@@ -113,7 +145,7 @@ public struct FileRemover: Sendable {
                    (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true {
                     return "Something inside this folder is locked or owned by another account, so it couldn't be removed as a whole."
                 }
-                return "macOS denied the removal. If this is in a protected location, grant Full Disk Access in UltaMac › Permissions."
+                return "macOS denied the removal. It may be owned by another account; use “Remove with Administrator Password”, or grant Full Disk Access if it is in another app’s data."
             case NSFileNoSuchFileError:
                 return "Item no longer exists."
             default: break

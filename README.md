@@ -45,6 +45,11 @@ One read-only scan finds junk, large and forgotten files, unused apps and Intel-
 
 <img src="docs/images/dashboard.jpg" alt="Smart Scan dashboard" width="100%">
 
+### Optimise: make your Mac faster, not just cleaner
+Finds what's slowing your Mac **right now** and fixes it with your OK: apps stuck at full CPU, apps eating memory while it's swapping, low disk space, heat, and too long since a restart. Helpers are counted with their app, so you see "Brave Browser 1.7 GB" rather than 16 helper processes. Speed-up tools rebuild the app database, relaunch a frozen Finder and Dock, reset font caches, rebuild Spotlight, free memory and flush DNS. The menu bar warns you when an app runs away.
+
+<img src="docs/images/optimise.jpg" alt="Optimise" width="100%">
+
 ### Smart Cleaner
 Fourteen transparent rules (app caches, logs, Xcode DerivedData, simulator caches, npm/Gradle/Cargo, old installers, Trash), each labelled with its **risk** and **what happens if you remove it**. Caches of running apps are skipped automatically. Everything goes to the Trash first.
 
@@ -69,7 +74,8 @@ An interactive treemap of any folder. Click to select, double-click to drill in,
 ### And also
 | | |
 |---|---|
-| **Menu-bar panel** | Live CPU, memory, disk and battery, one-click **Quick Clean** of safe junk, and shortcuts to every tool |
+| **Menu-bar panel** | Live CPU, memory, disk and battery, **slowdown alerts**, one-click **Quick Clean** of safe junk, and shortcuts to every tool |
+| **Locked files** | Files with a “deny delete” rule are flagged before removal; remove them with your administrator password if you choose |
 | **Duplicate Finder** | Byte-identical files matched by size, then quick hash, then full SHA-256; always keeps one copy |
 | **Large & Old Files** | Files over 100 MB or untouched for a year, filtered by kind |
 | **Process Inspector** | Sort your processes by CPU or memory; quit apps |
@@ -86,7 +92,7 @@ An interactive treemap of any folder. Click to select, double-click to drill in,
 
 ## Safety
 - **Read-only until you decide.** Every removal goes through a review sheet. The Trash is the default; permanent deletion asks twice.
-- **Protected by design.** System folders, SIP-protected and locked files, keychains, Mail, Messages, iCloud Drive and Photos libraries are never touched, and nothing is ever unlocked or forced.
+- **Protected by design.** System folders, SIP-protected files, keychains, Mail, Messages, iCloud Drive and Photos libraries are never touched. Locked files are flagged and only removed if you tick the box and enter your password in macOS's own prompt.
 - **Disk tools you can trust.** The boot disk and internal drives are refused. A target is never auto-selected, erasing needs a typed confirmation, and the drive is re-checked right before writing.
 - **Logged locally.** Every removal and disk operation is recorded on your Mac, and only there.
 - **Offline.** No networking code, analytics, accounts or update checks.
@@ -102,7 +108,7 @@ Requires macOS 14+ and Xcode 16+ (Swift 6).
 
 ```bash
 git clone https://github.com/ray0189/UltaMac.git && cd UltaMac
-swift test                          # 57 tests
+swift test                          # 69 tests
 scripts/build-app.sh --install      # build and install to /Applications
 scripts/build-app.sh --release && scripts/make-dmg.sh   # universal build + DMG
 ```

@@ -132,11 +132,12 @@ struct NetworkScreen: View {
 // MARK: - Maintenance
 
 struct MaintenanceScreen: View {
-    @State private var model = MaintenanceModel()
+    @Environment(AppState.self) private var state
+    private var model: MaintenanceModel { state.maintenance }
     @State private var expanded = Set<String>()
 
     var body: some View {
-        Page(destination: .maintenance, subtitle: "Supported tasks only. Each explains its purpose, effect and risk. No “RAM boosters”.") {
+        Page(destination: .maintenance, subtitle: "Supported tasks only. Each explains its purpose, effect and risk. Speed-up tools are in Optimise.") {
             LazyVStack(spacing: Theme.Space.m) {
                 ForEach(MaintenanceTask.all) { task in taskCard(task) }
             }

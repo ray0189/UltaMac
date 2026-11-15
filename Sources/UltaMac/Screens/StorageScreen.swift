@@ -25,7 +25,7 @@ struct StorageScreen: View {
             }
         } content: {
             VStack(spacing: Theme.Space.m) {
-                if let report = model.lastReport { ReportBanner(report: report) { model.lastReport = nil } }
+                if let report = model.lastReport { ReportBanner(report: report, onClose: { model.lastReport = nil }, onUpdate: { r in model.didRemove(r.removed); model.lastReport = r }) }
                 if model.isScanning {
                     ScanProgress(title: "Measuring \(relativeHomePath(model.root))",
                                  detail: model.progress.map { "\($0.filesScanned.formatted()) files · \(ByteFormat.string($0.bytesScanned)) · \(relativeHomePath(URL(fileURLWithPath: $0.currentPath)))" } ?? "Starting…") { model.stop() }

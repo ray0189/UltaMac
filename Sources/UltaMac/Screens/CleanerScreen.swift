@@ -124,10 +124,14 @@ struct CleanerScreen: View {
                 get: { model.selected.contains(item.url) },
                 set: { if $0 { model.selected.insert(item.url) } else { model.selected.remove(item.url) } }))
                 .toggleStyle(.checkbox).labelsHidden()
+                .disabled(item.note == "Locked" || item.note == "Needs admin")
             FileIcon(url: item.url, size: 16)
             Text(settings.expertMode ? relativeHomePath(item.url) : item.url.lastPathComponent)
                 .lineLimit(1).truncationMode(.middle)
-            if let note = item.note { Pill(text: note, tint: .orange, symbol: "app.badge") }
+            if let note = item.note {
+                if let lock = RemovalLock.check(item.url), note == lock.shortLabel { LockPill(lock: lock) }
+                else { Pill(text: note, tint: .orange, symbol: "app.badge") }
+            }
             Spacer()
             if settings.expertMode, let m = item.modified {
                 Text(m.formatted(date: .abbreviated, time: .omitted)).font(.caption).foregroundStyle(.tertiary)

@@ -206,6 +206,14 @@ struct Pill: View {
     }
 }
 
+/// Badge for items UltaMac can't remove; hover explains why and how to fix it yourself.
+struct LockPill: View {
+    let lock: RemovalLock
+    var body: some View {
+        Pill(text: lock.shortLabel, tint: .orange, symbol: "lock.fill").help(lock.reason)
+    }
+}
+
 struct RiskPill: View {
     let risk: RiskLevel
     var body: some View {

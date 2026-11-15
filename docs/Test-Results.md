@@ -1,6 +1,6 @@
 # Test Results — 2026-11-15 (M1 MacBook Pro, 8 GB, macOS 27.2, Xcode 27.1 / Swift 6.4)
 
-## Automated: `swift test`: **52 tests, 16 suites, all passing** (≈7 s)
+## Automated: `swift test`: **57 tests, 17 suites, all passing** (≈9 s)
 | Suite | Covers |
 |---|---|
 | Safety policy (9), File remover (2), Audit (3) | Protected paths, flags, symlinks, exclusions, per-item permanent mode, audit lines, rule documentation |
@@ -10,6 +10,7 @@
 | Disk safety gate (11) | Boot/internal/non-removable/read-only/too-small/disk-image refusals; revalidation detects removal and replacement; exclusive lock; **this Mac's boot disk is refused** |
 | Image inspector (4) | Hybrid ISO, plain ISO refused, GPT, compressed Pi image; SHA-256 equals `shasum` |
 | Raw writer (2) | **Real write → read-back → SHA-256 verify on a scratch 8 MB disk image**; default gate blocks it; cancellation |
+| Removal locks (5) | Real ACL-locked files and folders detected; remover gives a precise reason (never blames Full Disk Access) and leaves the lock untouched; scanners mark locked items unselected |
 | Network/maintenance/reports (4) | Local config only; identifiers excluded; read-only task runs; ProcessRunner passes `;`/`$()` literally |
 
 ## Manual / measured

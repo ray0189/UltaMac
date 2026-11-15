@@ -37,6 +37,12 @@ public struct FileEntry: Sendable, Identifiable, Hashable {
     public let modified: Date
     public let lastUsed: Date
     public let kind: Kind
+    /// Set when the item can't be removed by your account (shown, never forced).
+    public var lock: RemovalLock? = nil
+
+    public init(url: URL, size: Int64, modified: Date, lastUsed: Date, kind: Kind, lock: RemovalLock? = nil) {
+        self.url = url; self.size = size; self.modified = modified; self.lastUsed = lastUsed; self.kind = kind; self.lock = lock
+    }
 }
 
 /// Finds big files and files untouched for a long time in the user's own folders.
@@ -107,7 +113,7 @@ public struct LargeOldFinder: Sendable {
                 let isLarge = size >= largeThreshold
                 let isOld = size >= oldMinimumSize && used < oldCutoff
                 guard isLarge || isOld else { continue }
-                results.append(FileEntry(url: url, size: size, modified: modified, lastUsed: used, kind: .of(url)))
+                results.append(FileEntry(url: url, size: size, modified: modified, lastUsed: used, kind: .of(url), lock: RemovalLock.check(url)))
             }
         }
         return results.sorted { $0.size > $1.size }

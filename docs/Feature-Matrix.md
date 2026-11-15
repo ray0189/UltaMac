@@ -7,6 +7,7 @@ Last updated: **2026-11-15** (end of Phase 2). Evidence = automated test name, s
 | Area | Feature | Status | Evidence / notes |
 |---|---|---|---|
 | **Safety** | SafetyPolicy (deny-lists, SIP/immutable flags, allowed roots, exclusions) | ✅ | `SafetyTests` (9) |
+| | Lock detection before removal (ACL deny-delete on item or folder, read-only folder, other owner); flagged in every scanner, never unlocked | ✅ | `LockTests` (5) with real `chmod +a` locks; verified on a locked 10 GB `.ipsw` |
 | | Trash-first removal; per-item permanent only for items already in the Trash | ✅ | `permanentOnlyAppliesPerItemNotToWholeBatch` (regression for an audit bug) |
 | | Audit trail (JSON lines), Recent Activity screen | ✅ | `AuditTests`; screen screenshotted (empty state) |
 | **Dashboard** | Mac info, storage ring, CPU/memory/battery/network cards, health checks (no invented score), Smart Scan | ✅ | Screenshots before and after Smart Scan (11.01 GB junk, 76 large/old files, 13 unused apps, 2 Intel apps) |

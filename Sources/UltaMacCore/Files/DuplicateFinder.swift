@@ -91,7 +91,7 @@ public struct DuplicateFinder: Sendable {
                         FileEntry(url: url, size: size,
                                   modified: v.contentModificationDate ?? .distantPast,
                                   lastUsed: v.contentAccessDate ?? v.contentModificationDate ?? .distantPast,
-                                  kind: FileEntry.Kind.of(url))
+                                  kind: FileEntry.Kind.of(url), lock: RemovalLock.check(url))
                     }
                     let created = Dictionary(uniqueKeysWithValues: same.map { ($0.0, $0.1.creationDate ?? .distantFuture) })
                     let sorted = entries.sorted {

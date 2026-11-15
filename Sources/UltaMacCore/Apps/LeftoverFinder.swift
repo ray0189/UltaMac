@@ -11,9 +11,10 @@ public struct Leftover: Sendable, Identifiable, Hashable {
     public let kind: String
     public let match: Match
     public let size: Int64
+    public var lock: RemovalLock? = nil
 
-    /// Bundle-ID matches are reliable; name matches are shown unticked.
-    public var selectedByDefault: Bool { match == .bundleID }
+    /// Bundle-ID matches are reliable; name matches are shown unticked. Locked items never start ticked.
+    public var selectedByDefault: Bool { match == .bundleID && lock == nil }
 }
 
 /// Finds an app's support files in the user's Library by bundle identifier (and, less
@@ -88,7 +89,8 @@ public struct LeftoverFinder: Sendable {
                 }
                 seen.insert(entry.path)
                 results.append(Leftover(url: entry, kind: location.kind, match: match,
-                                        size: SizeCalculator.allocatedSize(of: entry, cancel: cancel)))
+                                        size: SizeCalculator.allocatedSize(of: entry, cancel: cancel),
+                                        lock: RemovalLock.check(entry)))
             }
         }
         return results.sorted { ($0.match == .bundleID ? 0 : 1, -$0.size) < ($1.match == .bundleID ? 0 : 1, -$1.size) }

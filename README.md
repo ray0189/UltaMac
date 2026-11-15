@@ -102,7 +102,7 @@ Requires macOS 14+ and Xcode 16+ (Swift 6).
 
 ```bash
 git clone https://github.com/ray0189/UltaMac.git && cd UltaMac
-swift test                          # 52 tests
+swift test                          # 57 tests
 scripts/build-app.sh --install      # build and install to /Applications
 scripts/build-app.sh --release && scripts/make-dmg.sh   # universal build + DMG
 ```

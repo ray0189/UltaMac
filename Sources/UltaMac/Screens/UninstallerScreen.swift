@@ -83,6 +83,7 @@ struct UninstallerScreen: View {
     private func appDetail(_ app: InstalledApp) -> some View {
         let leftoverSize = model.leftovers.filter { model.selectedLeftovers.contains($0.url) }.reduce(Int64(0)) { $0 + $1.size }
         let running = model.isRunning(app)
+        let appLock = RemovalLock.check(app.url)
         return VStack(alignment: .leading, spacing: Theme.Space.m) {
             HStack(spacing: Theme.Space.m) {
                 FileIcon(url: app.url, size: 60)
@@ -107,6 +108,10 @@ struct UninstallerScreen: View {
                 Label("This app is Intel-only and runs on your Mac through Rosetta 2. A newer Apple Silicon version may be available from its developer.",
                       systemImage: "info.circle").font(.callout).foregroundStyle(.secondary)
             }
+            if let appLock {
+                Label(appLock.reason, systemImage: "lock.fill").font(.callout).foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if running {
                 HStack {
                     Label("\(app.name) is running. Quit it before uninstalling.", systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
@@ -126,8 +131,12 @@ struct UninstallerScreen: View {
                         get: { model.selectedLeftovers.contains(leftover.url) },
                         set: { if $0 { model.selectedLeftovers.insert(leftover.url) } else { model.selectedLeftovers.remove(leftover.url) } }))
                         .toggleStyle(.checkbox).labelsHidden()
+                        .disabled(leftover.lock != nil)
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(relativeHomePath(leftover.url)).lineLimit(1).truncationMode(.middle)
+                        HStack(spacing: 4) {
+                            Text(relativeHomePath(leftover.url)).lineLimit(1).truncationMode(.middle)
+                            if let lock = leftover.lock { LockPill(lock: lock) }
+                        }
                         HStack(spacing: 4) {
                             Text(leftover.kind).font(.caption).foregroundStyle(.secondary)
                             Pill(text: leftover.match == .bundleID ? "High confidence" : "Name match: review",
@@ -152,7 +161,8 @@ struct UninstallerScreen: View {
                     .disabled(model.selectedLeftovers.isEmpty)
                 Button("Uninstall…") { pending = model.removal(includeApp: true) }
                     .buttonStyle(.borderedProminent).tint(.red)
-                    .disabled(running)
+                    .disabled(running || appLock != nil)
+                    .help(appLock?.reason ?? "")
             }
         }
     }

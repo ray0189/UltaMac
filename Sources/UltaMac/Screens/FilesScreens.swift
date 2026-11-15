@@ -35,7 +35,7 @@ struct LargeOldScreen: View {
                         .frame(width: 170)
                     }
                     table
-                    SelectionBar(count: model.selected.count, bytes: model.selectedEntries.reduce(0) { $0 + $1.size }, tint: .clean) {
+                    SelectionBar(count: model.selectedEntries.count, bytes: model.selectedEntries.reduce(0) { $0 + $1.size }, tint: .clean) {
                         pending = model.removal()
                     }
                 }
@@ -57,7 +57,10 @@ struct LargeOldScreen: View {
                 HStack(spacing: 8) {
                     FileIcon(url: e.url, size: 18)
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(e.url.lastPathComponent).lineLimit(1)
+                        HStack(spacing: 4) {
+                            Text(e.url.lastPathComponent).lineLimit(1)
+                            if let lock = e.lock { LockPill(lock: lock) }
+                        }
                         Text(relativeHomePath(e.url.deletingLastPathComponent())).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
                     }
                 }
@@ -143,7 +146,9 @@ struct DuplicatesScreen: View {
                         get: { model.selected.contains(file.url) },
                         set: { if $0 { model.selected.insert(file.url) } else { model.selected.remove(file.url) } }))
                         .toggleStyle(.checkbox).labelsHidden()
+                        .disabled(file.lock != nil)
                     Text(relativeHomePath(file.url)).lineLimit(1).truncationMode(.middle)
+                    if let lock = file.lock { LockPill(lock: lock) }
                     if !model.selected.contains(file.url) { Pill(text: "Keep", tint: .green) }
                     if index == 0 { Pill(text: "Oldest", tint: .secondary) }
                     Spacer()

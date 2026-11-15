@@ -5,6 +5,7 @@
 - **Windows images with install.wim > 4 GB** need `wimlib-imagex` (`brew install wimlib`, LGPL), which isn't bundled. Legacy-BIOS-only PCs aren't supported.
 - **Compressed images** (.xz/.gz/.zip) must be decompressed first. Multiboot (Ventoy-style) isn't implemented.
 - **Folder privacy prompts:** scanning Desktop/Documents/Downloads or other apps' data makes macOS ask for permission, and scans wait for your answer. Full Disk Access avoids the prompts.
+- **Locked items:** files or folders with a “deny delete” access rule (as found on one Mac’s ~/Pictures) are shown with a Locked badge and skipped. UltaMac never changes permissions; unlock them in Finder › Get Info › Sharing & Permissions if you want them removed.
 - **Root-owned items** (some App Store apps, `/Library` launch daemons) can't be removed without admin rights and are reported, never forced.
 - **Temperatures and fan speeds** are only available through undocumented interfaces and aren't shown. Battery temperature isn't reported by this M1.
 - **APFS clones:** reclaimable space can be overstated for cloned files (planned: `ATTR_CMNEXT_PRIVATESIZE`).

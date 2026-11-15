@@ -12,7 +12,8 @@ final class FakeHome {
     }
 
     deinit {
-        // Clear flags we may have set so cleanup succeeds.
+        // Remove ACLs and flags we may have set so cleanup succeeds.
+        _ = ProcessRunner.run("/bin/chmod", ["-R", "-N", url.path])
         if let e = FileManager.default.enumerator(atPath: url.path) {
             for case let rel as String in e { chflags(url.appendingPathComponent(rel).path, 0) }
         }

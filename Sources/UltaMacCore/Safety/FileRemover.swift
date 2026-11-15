@@ -77,6 +77,11 @@ public struct FileRemover: Sendable {
                 report.failures.append(RemovalFailure(url: request.url, reason: reason))
                 continue
             }
+            // Diagnose locks first so the reason is precise and nothing is half-attempted.
+            if let lock = RemovalLock.check(request.url) {
+                report.failures.append(RemovalFailure(url: request.url, reason: lock.reason))
+                continue
+            }
             let itemMode: RemovalMode = request.permanentOnly ? .deletePermanently : mode
             do {
                 switch itemMode {
@@ -90,19 +95,25 @@ public struct FileRemover: Sendable {
                 report.bytesRemoved += request.size
                 sizes[request.url] = request.size
             } catch {
-                report.failures.append(RemovalFailure(url: request.url, reason: FileRemover.describe(error)))
+                report.failures.append(RemovalFailure(url: request.url, reason: FileRemover.describe(error, url: request.url)))
             }
         }
         auditLog?.record(report, sizes: sizes, context: context)
         return report
     }
 
-    static func describe(_ error: Error) -> String {
+    static func describe(_ error: Error, url: URL? = nil) -> String {
         let ns = error as NSError
         if ns.domain == NSCocoaErrorDomain {
             switch ns.code {
             case NSFileWriteNoPermissionError, NSFileReadNoPermissionError:
-                return "Permission denied. It may belong to another user or need Full Disk Access."
+                // Re-diagnose: a lock may have appeared after the pre-check, or be on a nested item.
+                if let url, let lock = RemovalLock.check(url) { return lock.reason }
+                if let url, FileManager.default.fileExists(atPath: url.path),
+                   (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true {
+                    return "Something inside this folder is locked or owned by another account, so it couldn't be removed as a whole."
+                }
+                return "macOS denied the removal. If this is in a protected location, grant Full Disk Access in UltaMac › Permissions."
             case NSFileNoSuchFileError:
                 return "Item no longer exists."
             default: break

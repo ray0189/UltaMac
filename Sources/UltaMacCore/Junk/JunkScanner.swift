@@ -88,6 +88,10 @@ public struct JunkScanner: Sendable {
                 guard size > 0 else { continue }
                 var selected = rule.selectedByDefault
                 var note: String? = nil
+                if let lock = RemovalLock.check(entry) {
+                    selected = false
+                    note = lock.shortLabel
+                }
                 if rule.protectRunningApps {
                     let base = name.hasSuffix(".savedState") ? String(name.dropLast(".savedState".count)) : name
                     if runningBundleIDs.contains(base) {

@@ -45,7 +45,7 @@ final class AppSettings {
         soundEnabled = defaults.bool(forKey: "soundEnabled") // off by default
         soundVolume = defaults.object(forKey: "soundVolume") as? Float ?? 0.6
         soundNavigation = defaults.bool(forKey: "soundNavigation")
-        showMenuBarMonitor = defaults.bool(forKey: "showMenuBarMonitor")
+        showMenuBarMonitor = defaults.object(forKey: "showMenuBarMonitor") as? Bool ?? true
         samplingInterval = defaults.object(forKey: "samplingInterval") as? Double ?? 2
         unusedAppDays = defaults.object(forKey: "unusedAppDays") as? Int ?? 90
         allowDiskImageTargets = defaults.bool(forKey: "allowDiskImageTargets")

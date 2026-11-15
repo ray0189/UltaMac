@@ -1,58 +1,115 @@
-# UltaMac — The Ultimate Mac Toolkit
+<p align="center">
+  <img src="docs/images/hero.jpg" alt="UltaMac — The Ultimate Mac Toolkit" width="100%">
+</p>
 
-**Clean. Monitor. Optimise. Recover.**
+<p align="center">
+  <a href="https://github.com/ray0189/UltaMac/releases/latest"><img alt="Download" src="https://img.shields.io/github/v/release/ray0189/UltaMac?label=Download&style=for-the-badge&color=1fc8ad"></a>
+  <img alt="macOS 14+" src="https://img.shields.io/badge/macOS-14%2B-2a6cf2?style=for-the-badge&logo=apple&logoColor=white">
+  <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-f05138?style=for-the-badge&logo=swift&logoColor=white">
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-6e7681?style=for-the-badge"></a>
+  <img alt="Offline" src="https://img.shields.io/badge/100%25-offline-1fc8ad?style=for-the-badge">
+</p>
 
-A native, fully offline macOS utility suite written in Swift and SwiftUI, built for Apple Silicon. No accounts, no subscriptions, no telemetry, no network code.
+<h3 align="center">Clean. Monitor. Optimise. Recover.</h3>
+<p align="center">A native, fully offline Mac utility suite: cleaner, storage map, system monitor, uninstaller,<br>diagnostics and bootable-USB maker in one app. No accounts. No subscriptions. No telemetry.</p>
 
-## Download
-1. Go to **[Releases](https://github.com/ray0189/UltaMac/releases/latest)** and download `UltaMac.zip`.
-2. Unzip it and drag **UltaMac** into your **Applications** folder.
-3. The first time, **right-click UltaMac → Open → Open**. UltaMac is free and isn't notarised by Apple, so macOS asks once. On macOS 15 and later, if there's no Open button, go to **System Settings › Privacy & Security** and click **Open Anyway**.
-4. Optional: in UltaMac, open **Permissions** and grant Full Disk Access for complete scans.
+<p align="center">
+  <a href="https://github.com/ray0189/UltaMac/releases/latest"><b>⬇︎ Download UltaMac.dmg</b></a> ·
+  <a href="#features">Features</a> ·
+  <a href="#safety">Safety</a> ·
+  <a href="#build-from-source">Build</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
-Requires macOS 14 Sonoma or later. Runs natively on Apple Silicon and Intel.
+---
 
-Each release lists the zip's SHA-256 so you can verify the download: `shasum -a 256 UltaMac.zip`.
+## Install
+
+<img src="docs/images/dmg-window.jpg" alt="Drag UltaMac to Applications" width="420" align="right">
+
+1. Download **UltaMac.dmg** from the [latest release](https://github.com/ray0189/UltaMac/releases/latest).
+2. Open it and drag **UltaMac** onto **Applications**.
+3. First launch: **right-click UltaMac → Open → Open**. It's free and not notarised by Apple, so macOS asks once. On macOS 15+, use **System Settings › Privacy & Security › Open Anyway**.
+4. Optional: open **Permissions** in UltaMac and turn on Full Disk Access for complete scans.
+
+Requires **macOS 14 Sonoma** or later · Universal (Apple Silicon + Intel).
+
+<br clear="right">
+
+---
 
 ## Features
-| Area | What it does |
+
+### Smart Scan: your Mac at a glance
+One read-only scan finds junk, large and forgotten files, unused apps and Intel-only apps. Health checks use measured values against stated thresholds; there's no made-up "health score".
+
+<img src="docs/images/dashboard.jpg" alt="Smart Scan dashboard" width="100%">
+
+### Smart Cleaner
+Fourteen transparent rules (app caches, logs, Xcode DerivedData, simulator caches, npm/Gradle/Cargo, old installers, Trash), each labelled with its **risk** and **what happens if you remove it**. Caches of running apps are skipped automatically. Everything goes to the Trash first.
+
+<img src="docs/images/cleaner.jpg" alt="Smart Cleaner" width="100%">
+
+### Storage Analyser
+An interactive treemap of any folder. Click to select, double-click to drill in, and switch to list view for details.
+
+<img src="docs/images/storage.jpg" alt="Storage treemap" width="100%">
+
+<table>
+<tr>
+<td width="50%"><b>Live Monitor</b><br>CPU (performance + efficiency cores), memory pressure, swap and network: real values from Mach and BSD APIs.<br><br><img src="docs/images/monitor.jpg" alt="Live Monitor"></td>
+<td width="50%"><b>App Uninstaller</b><br>Removes apps and the files they leave behind. Flags Intel-only apps that run through Rosetta and apps you haven't opened in months.<br><br><img src="docs/images/uninstaller.jpg" alt="App Uninstaller"></td>
+</tr>
+<tr>
+<td><b>Battery</b><br>Health against design capacity, cycle count, live charge rate and adapter details.<br><br><img src="docs/images/battery.jpg" alt="Battery"></td>
+<td><b>USB & OS Toolkit</b><br>Guided bootable-USB wizard for Linux, Raspberry Pi OS, macOS and Windows, with write and SHA-256 verification and strict protection for internal disks.<br><br><img src="docs/images/usb.jpg" alt="USB Toolkit"></td>
+</tr>
+</table>
+
+### And also
+| | |
 |---|---|
-| **Smart Scan** | One read-only scan for junk, large/old files and apps, with transparent health checks (no invented scores) |
-| **Smart Cleaner** | 14 documented rules (caches, logs, Xcode, npm, Gradle, Downloads installers, Trash), each with a risk level and consequences |
-| **Storage Analyser** | Interactive squarified treemap and list with drill-down |
-| **Duplicate Finder** | Size → partial hash → SHA-256; hard links excluded; always keeps one copy |
-| **Large & Old Files** | Files over 100 MB, or untouched for a year |
-| **App Uninstaller** | Leftovers by bundle ID (high confidence) or name (review); flags Intel-only and unused apps |
-| **Live Monitor & Process Inspector** | CPU (P/E cores), memory pressure, swap, network, per-process usage |
-| **Battery** | Health vs design capacity, cycles, charge rate, adapter |
-| **Startup Manager, Network Inspector, Maintenance, System Reports** | Launch items, interfaces/DNS, safe diagnostics, Markdown/JSON export |
-| **Disk Manager, ISO Library, USB & OS Toolkit** | Drive inspection and erase, image detection and SHA-256 checks, bootable USB wizard (Linux/Raspberry Pi raw, macOS `createinstallmedia`, Windows) |
+| **Menu-bar panel** | Live CPU, memory, disk and battery, one-click **Quick Clean** of safe junk, and shortcuts to every tool |
+| **Duplicate Finder** | Byte-identical files matched by size, then quick hash, then full SHA-256; always keeps one copy |
+| **Large & Old Files** | Files over 100 MB or untouched for a year, filtered by kind |
+| **Process Inspector** | Sort your processes by CPU or memory; quit apps |
+| **Startup Manager** | Every launch agent and daemon, and when it starts |
+| **Network Inspector** | Interfaces, IPs, DNS, router and open connections, read locally |
+| **Maintenance** | Verify the disk, check app signatures, crash summary, Spotlight status, snapshots, DNS flush |
+| **Disk Manager · ISO Library** | Inspect, eject and erase USB drives; organise images and verify checksums |
+| **System Reports** | Export a hardware and software summary as Markdown or JSON |
+| **Sounds & Expert Mode** | Original synthesised sound effects (off by default); Expert Mode reveals paths, hashes and raw values |
+
+<img src="docs/images/maintenance.jpg" alt="Maintenance" width="100%">
+
+---
 
 ## Safety
-- Scanning is read-only. Removal always goes through a review sheet; the Trash is the default; permanent deletion asks twice.
-- A safety policy refuses system paths, SIP-protected or locked files, keychains, mail, iCloud, Photos libraries and your exclusions, and never unlocks or force-deletes anything.
-- Disk tools refuse the boot disk and internal disks, never auto-select a target, need a typed confirmation, and re-verify the device right before writing.
-- Every removal and disk operation is logged locally.
+- **Read-only until you decide.** Every removal goes through a review sheet. The Trash is the default; permanent deletion asks twice.
+- **Protected by design.** System folders, SIP-protected and locked files, keychains, Mail, Messages, iCloud Drive and Photos libraries are never touched, and nothing is ever unlocked or forced.
+- **Disk tools you can trust.** The boot disk and internal drives are refused. A target is never auto-selected, erasing needs a typed confirmation, and the drive is re-checked right before writing.
+- **Logged locally.** Every removal and disk operation is recorded on your Mac, and only there.
+- **Offline.** No networking code, analytics, accounts or update checks.
 
-See [`docs/Security-Model.md`](docs/Security-Model.md).
+More detail: [Security model](docs/Security-Model.md) · [Known limitations](docs/Known-Limitations.md) · [Test results](docs/Test-Results.md)
 
-## Status
-Early development. See [`docs/Feature-Matrix.md`](docs/Feature-Matrix.md), [`docs/Test-Results.md`](docs/Test-Results.md) and [`docs/Known-Limitations.md`](docs/Known-Limitations.md).
-**USB writing has only been verified on scratch disk images, not physical drives.**
+> **Early release.** USB writing is verified on disk images, not yet on physical drives, so use a spare stick. See [Feature matrix](docs/Feature-Matrix.md) for what's fully tested.
 
-## Build
-Requires macOS 14+, Xcode 16+ (Swift 6).
+---
+
+## Build from source
+Requires macOS 14+ and Xcode 16+ (Swift 6).
 
 ```bash
-swift test                      # 52 tests
-scripts/build-app.sh            # → build/UltaMac.app
-scripts/build-app.sh --install  # also copies to /Applications
+git clone https://github.com/ray0189/UltaMac.git && cd UltaMac
+swift test                          # 52 tests
+scripts/build-app.sh --install      # build and install to /Applications
+scripts/build-app.sh --release && scripts/make-dmg.sh   # universal build + DMG
 ```
 
-Or open `Package.swift` in Xcode. For full scanning, grant Full Disk Access in System Settings › Privacy & Security (the app's Permissions screen walks you through it).
+Or open `Package.swift` in Xcode.
 
 ## Contributing
-UltaMac is open source under the [MIT licence](LICENSE): anyone can use, copy, modify and share it. To propose changes, fork the repo and open a pull request; see [CONTRIBUTING.md](CONTRIBUTING.md).
+UltaMac is open source under the [MIT licence](LICENSE): use it, change it, share it. Fork the repo and open a pull request; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Originality
-All code, the icon and the sound effects are original (the sounds are synthesised by `scripts/make-sounds.swift`, the icon is drawn by `scripts/make-icon.swift`). No third-party dependencies.
+<sub>All code, the icon, the artwork and the sound effects are original. No third-party dependencies.</sub>

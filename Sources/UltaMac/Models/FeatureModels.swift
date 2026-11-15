@@ -7,7 +7,7 @@ import UltaMacCore
 final class StorageModel {
     enum ViewMode: String { case map, list }
 
-    var root: URL = FileManager.default.homeDirectoryForCurrentUser
+    var root: URL = Presentation.storageRoot ?? FileManager.default.homeDirectoryForCurrentUser
     private(set) var tree: StorageNode?
     var path: [StorageNode] = []
     var selection = Set<UUID>()

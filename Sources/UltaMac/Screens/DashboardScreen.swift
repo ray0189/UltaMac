@@ -46,7 +46,7 @@ struct DashboardScreen: View {
         HStack(alignment: .center, spacing: Theme.Space.xxl) {
             VStack(alignment: .leading, spacing: Theme.Space.m) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(Host.current().localizedName ?? "Your Mac")
+                    Text(Presentation.redact ? "MacBook Pro" : (Host.current().localizedName ?? "Your Mac"))
                         .font(.system(size: 30, weight: .bold, design: .rounded))
                     Text("\(monitor.system.chip) · \(monitor.system.osVersion) · \(ByteFormat.memory(monitor.memory?.total ?? 0)) memory")
                         .foregroundStyle(.secondary)

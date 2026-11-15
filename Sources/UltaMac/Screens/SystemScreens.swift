@@ -232,7 +232,7 @@ struct BatteryScreen: View {
                             row("Voltage", d?.voltage.map { String(format: "%.2f V", $0) })
                             row("Current", d?.amperage.map { "\($0) mA" })
                             row("Temperature", d?.temperature.map { String(format: "%.1f °C", $0) })
-                            row("Serial", d?.serial)
+                            row("Serial", Presentation.redact ? "Hidden" : d?.serial)
                         }
                         Text("Read from the AppleSmartBattery IORegistry entry. These keys aren't formally documented by Apple, so treat the values as reported by the battery controller.")
                             .font(.caption).foregroundStyle(.tertiary)
@@ -306,61 +306,6 @@ struct StartupScreen: View {
         .onAppear { model.load() }
         .sheet(item: $pending) { removal in
             ReviewSheet(removal: removal) { report in model.didRemove(report.removed); model.lastReport = report }
-        }
-    }
-}
-
-// MARK: - Menu bar
-
-struct MenuBarLabel: View {
-    @Environment(MonitorModel.self) private var monitor
-    var body: some View {
-        HStack(spacing: 3) {
-            Image(systemName: "sparkles")
-            Text("\(Int((monitor.cpu?.total ?? 0) * 100))%").monospacedDigit()
-        }
-        .task { monitor.start() }
-    }
-}
-
-struct MenuBarPanel: View {
-    @Environment(MonitorModel.self) private var monitor
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Space.m) {
-            HStack {
-                IconBadge(symbol: "sparkles", tint: .brand, size: 26)
-                Text("UltaMac").font(.headline)
-                Spacer()
-                Text("Offline").font(.caption).foregroundStyle(.secondary)
-            }
-            row("CPU", "\(Int((monitor.cpu?.total ?? 0) * 100))%", Sparkline(values: monitor.cpuTotals, maxValue: 1, tint: .performance))
-            row("Memory", monitor.memory.map { "\(ByteFormat.memory($0.used)) · \($0.pressure.rawValue)" } ?? "—",
-                Sparkline(values: monitor.memoryTotals, maxValue: 1, tint: .apps))
-            if let d = monitor.disk { row("Disk", "\(ByteFormat.string(d.available)) free", SizeBar(fraction: d.usedFraction, tint: .storage)) }
-            if let n = monitor.network { row("Network", "↓ \(ByteFormat.rate(n.bytesInPerSecond))  ↑ \(ByteFormat.rate(n.bytesOutPerSecond))", EmptyView()) }
-            if let b = monitor.battery { row("Battery", "\(b.percent)%\(b.isCharging ? " · charging" : "")", SizeBar(fraction: Double(b.percent) / 100, tint: .success)) }
-            Divider()
-            HStack {
-                Button("Open UltaMac") { openWindow(id: "main"); NSApp.activate() }
-                Spacer()
-                Button("Quit") { NSApp.terminate(nil) }
-            }
-        }
-        .padding(Theme.Space.l)
-        .frame(width: 300)
-    }
-
-    private func row<V: View>(_ title: String, _ value: String, _ visual: V) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title).foregroundStyle(.secondary)
-                Spacer()
-                Text(value).monospacedDigit()
-            }
-            .font(.callout)
-            visual.frame(height: 18)
         }
     }
 }

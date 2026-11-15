@@ -78,3 +78,15 @@ enum Motion {
 func animate(_ animation: Animation? = Motion.standard, _ body: () -> Void) {
     withAnimation(animation, body)
 }
+
+/// Launch options used when capturing screenshots for documentation.
+/// `--redact` hides this Mac's name and battery serial; `--scan-root <path>` sets the Storage
+/// Analyser's starting folder. Neither changes any measured value.
+enum Presentation {
+    static let redact = CommandLine.arguments.contains("--redact")
+    static var storageRoot: URL? {
+        let a = CommandLine.arguments
+        guard let i = a.firstIndex(of: "--scan-root"), i + 1 < a.count else { return nil }
+        return URL(fileURLWithPath: a[i + 1])
+    }
+}

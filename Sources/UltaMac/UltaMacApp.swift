@@ -60,7 +60,7 @@ struct UltaMacApp: App {
         }
 
         MenuBarExtra(isInserted: $settings.showMenuBarMonitor) {
-            MenuBarPanel().environment(monitor).environment(settings)
+            MenuBarPanel().environment(monitor).environment(settings).environment(state)
         } label: {
             MenuBarLabel().environment(monitor)
         }

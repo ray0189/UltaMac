@@ -1,0 +1,9 @@
+.build/
+build/
+.swiftpm/
+*.xcodeproj/
+DerivedData/
+.DS_Store
+
+# Private research notes on a third-party app: kept local, never published.
+docs/Phase1-Analysis.md
